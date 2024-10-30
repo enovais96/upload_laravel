@@ -19,8 +19,7 @@ RUN docker-php-ext-install pdo_mysql mbstring exif pcntl bcmath gd sockets
 
 COPY --from=composer:latest /usr/bin/composer /usr/bin/composer
 
-COPY /docker-config/php/php.ini /usr/local/etc/php/php.ini-development
-COPY /docker-config/php/php.ini /usr/local/etc/php/php.ini-production
+COPY /docker-config/php/php.ini /usr/local/etc/php/php.ini
 #php.ini-production
 RUN useradd -G www-data,root -u $uid -d /home/$user $user
 RUN mkdir -p /home/$user/.composer && \
