@@ -7,6 +7,8 @@ use App\Services\Interfaces\CsvServiceInterface;
 use App\Services\Interfaces\CsvProcessorServiceInterface;
 use App\Services\Implementation\CsvService;
 use App\Services\Implementation\CsvProcessorService;
+use App\Repositories\Interfaces\BoletoRepositoryInterface;
+use App\Repositories\Implementation\BoletoRepository;
 
 class AppServiceProvider extends ServiceProvider {
     /**
@@ -15,6 +17,7 @@ class AppServiceProvider extends ServiceProvider {
     public function register(): void {
         $this->app->bind(CsvServiceInterface::class, CsvService::class);
         $this->app->bind(CsvProcessorServiceInterface::class, CsvProcessorService::class);
+        $this->app->bind(BoletoRepositoryInterface::class, BoletoRepository::class);
     }
 
     /**

@@ -5,16 +5,18 @@ namespace App\Services\Implementation;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Storage;
 use App\Services\Interfaces\CsvProcessorServiceInterface;
+use App\Repositories\Interfaces\BoletoRepositoryInterface;
 
 class CsvProcessorService implements CsvProcessorServiceInterface {
 
-    protected $batchSize;
+    protected $repository;
 
-    public function __construct(int $batchSize = 1000) {
-        $this->batchSize = $batchSize;
+    public function __construct(BoletoRepositoryInterface $repository) {
+        $this->repository = $repository;
     }
 
     public function process($filePath): void {
+        $batchSize = config('services.csv.batch_size'); 
 
         if (($handle = fopen($filePath, 'r')) !== false) {
             DB::disableQueryLog();
@@ -29,7 +31,7 @@ class CsvProcessorService implements CsvProcessorServiceInterface {
                     $batchData[] = $this->transformData($data);
                 }
 
-                if (count($batchData) >= $this->batchSize) {
+                if (count($batchData) >= $batchSize) {
                     $this->saveData($batchData);
                     $batchData = [];
                 }
@@ -62,9 +64,7 @@ class CsvProcessorService implements CsvProcessorServiceInterface {
         ];
     }
 
-    protected function saveData(array $batchData): void {
-        DB::beginTransaction();
-        DB::table('boletos')->insertOrIgnore($batchData);
-        DB::commit();
+    protected function saveData(array $data): void {
+        $this->repository->salvarBoleto($data);
     }
 }
